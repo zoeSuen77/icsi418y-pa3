@@ -27,7 +27,8 @@ async function main() {
   mongo = await MongoMemoryReplSet.create({
     binary: { version: '7.0.14', downloadDir: path.join(root, '.cache', 'mongodb-binaries') },
     instanceOpts: [{ port: mongoPort, dbPath }],
-    replSet: { count: 1, name: 'pa3rs', storageEngine: 'wiredTiger' },
+    // Let this launcher stop MongoDB after the API closes; terminal Ctrl+C must not stop it first.
+    replSet: { count: 1, name: 'pa3rs', storageEngine: 'wiredTiger', spawn: { detached: true } },
   });
   if (Number(new URL(mongo.getUri()).port) !== mongoPort) {
     const error = new Error(`MongoDB port ${mongoPort} is already in use. Stop the other instance before starting this demo.`);

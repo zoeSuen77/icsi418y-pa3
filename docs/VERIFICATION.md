@@ -1,6 +1,6 @@
 # PA3 verification record
 
-Verified for the October 13, 2026 delivery, using Node.js 24.15.0, MongoDB 7.0.14, and installed Google Chrome on macOS.
+Verified for the October 13–14, 2026 delivery, using Node.js 24.15.0, MongoDB 7.0.14, and installed Google Chrome on macOS.
 
 | Check | Result |
 | --- | --- |
@@ -10,6 +10,7 @@ Verified for the October 13, 2026 delivery, using Node.js 24.15.0, MongoDB 7.0.1
 | `npm audit` after compatible dependency fixes | 0 reported vulnerabilities |
 | `npm run demo -- --seed` | React, Express and local replica set started; 3 users and 2 projects prepared |
 | `npm run db:inspect -- --local` | Users, Projects and ProjectMemberships inspected; references are ObjectIds |
+| Desktop startup file and Ctrl+C | Final Desktop copy starts, seeds idempotently, and shuts down without a connection-error stack |
 | Local demo stop/restart | Same persisted user and project records present after restart |
 | Repeated demo seed | Existing projects and user records preserved without duplicates |
 | Visual inspection | Desktop workspace, mobile creation form and member controls checked; no horizontal overflow at 375px |
