@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { hashPassword, verifyPassword } = require('./passwords');
+const { createProjectRouter } = require('./projects');
 
 const limits = { f_name: 100, l_name: 100, username: 64, password: 1024 };
 
@@ -13,7 +14,7 @@ function publicUser(user) {
   return { _id: user._id.toString(), f_name: user.f_name, l_name: user.l_name, username: user.username };
 }
 
-function createApp(users, { origins = ['http://localhost:5173', 'http://127.0.0.1:5173'], logger = console } = {}) {
+function createApp(users, { projects, memberships, client, origins = ['http://localhost:5173', 'http://127.0.0.1:5173'], logger = console } = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.use(cors({ origin: origins }));
@@ -60,6 +61,8 @@ function createApp(users, { origins = ['http://localhost:5173', 'http://127.0.0.
       next(error);
     }
   });
+
+  if (projects && memberships && client) app.use(createProjectRouter({ users, projects, memberships, client }));
 
   app.use((_req, res) => res.status(404).json({ message: 'This endpoint was not found.' }));
   app.use((error, _req, res, _next) => {

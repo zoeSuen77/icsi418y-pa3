@@ -1,16 +1,17 @@
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:9000').replace(/\/$/, '');
 
 // HTTP errors and unreachable servers need different feedback.
-export async function postForm(endpoint, values) {
+export async function apiRequest(endpoint, { method = 'GET', values, signal } = {}) {
   let response;
   try {
     response = await fetch(`${API_URL}/${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-      signal: AbortSignal.timeout(15000),
+      method,
+      headers: values === undefined ? undefined : { 'Content-Type': 'application/json' },
+      body: values === undefined ? undefined : JSON.stringify(values),
+      signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(15000)]) : AbortSignal.timeout(15000),
     });
   } catch {
+    if (signal?.aborted) throw new DOMException('Request cancelled', 'AbortError');
     throw new Error('Could not connect to the server. Please try again shortly.');
   }
   let data;
@@ -21,4 +22,8 @@ export async function postForm(endpoint, values) {
   }
   if (!response.ok) throw new Error(data.message || 'Something went wrong. Please try again.');
   return data;
+}
+
+export function postForm(endpoint, values) {
+  return apiRequest(endpoint, { method: 'POST', values });
 }

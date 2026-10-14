@@ -1,68 +1,64 @@
-# PA2 Zoom demonstration script
+# PA3 Zoom demonstration script
 
-Target length: **4–5 minutes**, including clicks. The words below are a practice guide; understand the code and explain it in your own words while recording the actual application in Zoom.
+Target length: **4 minutes 45 seconds**, including clicks. Practice the sequence once and explain the application in your own words. Record the actual running application with Zoom.
 
 ## Before recording
 
-- Run and test the application. If using the course's Atlas setup, configure `server/.env` and use `npm run dev`. For the working local version, use `npm run demo`.
-- Open the browser at `http://localhost:5173` and your editor at the project folder.
-- Open `pa2.users` in MongoDB Atlas (course setup) or MongoDB Compass at `mongodb://127.0.0.1:27018` (local demo). The terminal command `npm run db:users -- --local` can also inspect local documents.
-- Choose a new username for each take, for example `alex_pa2_take1`. Use first name `Alex`, last name `Chen`, and a disposable password such as `DemoPass123!`.
-- Prepare `App.jsx`, `Signup.jsx`, `api.js`, `app.js`, `server.js`, and `passwords.js` in editor tabs. Keep `.env` closed.
-- In Zoom, start a meeting, share the application/editor, and record. Check microphone audio first. Never display database credentials.
+1. Start the app with `npm run demo` (local MongoDB) or `npm run dev` (configured Atlas).
+2. In a second terminal, run `npm run demo:seed`. Have at least three users and two projects available.
+3. Confirm Alex, Maya, and Sam are available. On a fresh seed their usernames are `alex_chen`, `maya_patel`, and `sam_rivera`; their password is `CampusDemo123!`. Existing accounts keep their original passwords.
+4. Remove Sam from Campus Planner and Study Together before a repeat take. Leave each project's lead in place.
+5. Prepare a new signup username, such as `demo_take_01`, and a new project name, such as `Assignment Tracker 01`. Use a fresh suffix for another take.
+6. Open the application, MongoDB Compass or Atlas Data Explorer, and the editor. For local MongoDB, connect Compass to `mongodb://127.0.0.1:27018/?directConnection=true` and select `pa3`. The terminal command `npm run db:inspect -- --local` is another way to show the actual collections.
+7. Prepare tabs for the project React components, `client/src/api.js`, `server/projects.js`, and `server/database.js`. Keep `.env` closed.
+8. In Zoom, share the application/editor, test microphone audio, and start recording.
 
-## 0:00–0:30 — Start the application
+## 0:00–0:35 — PA2 signup and login
 
-**Show:** The terminal command starting the application, the MongoDB connection message, and the running browser.
+**Do:** Show the running application. Register a new user, then log in with that username and password.
 
-“This is my Programming Assignment 2 application. It uses React for the interface, Node.js and Express for the backend, and MongoDB to store users. The frontend runs on port 5173 and the backend runs on port 9000. Here is the running application. I can switch between login and signup.”
+“This is my Programming Assignment 3 application, built on my PA2 React, Express, and MongoDB application. The original signup and login features still work. I am creating a new account and then logging in with the same credentials. The application validates the credentials and shows the successful login.”
 
-## 0:30–1:10 — Validation and successful signup
+## 0:35–1:15 — Create a project and choose the lead
 
-**Do:** Switch to Sign up. Submit an empty form, then enter the four demo fields and click Create account.
+**Do:** Open project management. Create `Assignment Tracker 01`, description `Track course assignments and deadlines`, status `Planning`, and lead Alex Chen. Show the saved project in the list.
 
-“The signup form asks for first name, last name, username, and password. Submitting an empty form displays a validation message. I will now enter the required information and create a user. The success message means the backend has stored the account in MongoDB.”
+“To create a project, I enter its name and description, choose one of the three allowed statuses, and select an existing registered user as the project lead. Here I choose Alex. The saved project displays the name, description, status, and Alex's readable name rather than just an ID.”
 
-## 1:10–1:40 — Inspect MongoDB
+## 1:15–1:45 — Automatic lead membership and adding members
 
-**Do:** Refresh Atlas or Compass and filter by the demo username. Show the actual saved document.
+**Do:** Open the new project's members and point out Alex. Add Sam Rivera.
 
-“Here is the user document in the users collection. It has an automatically generated ID, first name, last name, username, and password. The password field contains a salted hash instead of the original password. The username has a unique index to prevent duplicate accounts.”
+“Alex is already a member because the backend automatically adds the lead when creating the project. The lead must stay a member. I can now add another registered user, Sam. The member list refreshes after the successful request.”
 
-## 1:40–2:00 — Duplicate signup
+## 1:45–2:25 — Duplicate rejection and many-to-many membership
 
-**Do:** Return to the form and submit the same username again with all required fields.
+**Do:** Try to add Sam to the same project again and show the error. Select Study Together, add Sam there, then switch between the two member lists.
 
-“If I try to register the same username again, the server rejects it and the interface tells me the username is already taken. No second user is created. Usernames are case-insensitive in this implementation.”
+“If I try to add Sam again to this project, the server rejects the duplicate and the interface displays the error. Sam can still join another project. I will add Sam to Study Together as well. These two member lists show that one user belongs to multiple projects, and each project can have multiple users.”
 
-## 2:00–2:40 — Login success and failure
+## 2:25–2:45 — Remove a non-lead member
 
-**Do:** Switch to Log in. Enter the new username and correct password, then submit. After success, enter an incorrect password and submit again.
+**Do:** Remove Sam from the newly created project. Show Alex remains, and Sam remains in Study Together.
 
-“With the correct credentials, the application displays a successful login message. For this assignment, successful login only needs an acknowledgement. Now I will enter an incorrect password. The server rejects it, and the interface displays a login failure message. An unknown username also fails.”
+“I can remove Sam because Sam is not this project's lead. This deletes only the membership for this project. Alex stays as the lead, and Sam's membership in Study Together is unaffected. The backend also rejects any attempt to remove the lead.”
 
-## 2:40–3:25 — Explain React state and HTTP
+## 2:45–3:25 — Show MongoDB documents
 
-**Show:** `client/src/App.jsx`, `components/Signup.jsx`, and `api.js`.
+**Do:** In Compass/Atlas, show `Projects`, then `ProjectMemberships`. Point out the new project's `_id`, `project_lead_id`, its lead membership, and Sam's remaining membership in Study Together. Briefly show the corresponding user IDs in `Users` if time permits.
 
-“App switches between the Login and Signup components. Each form uses React's useState to store its input values and feedback. Each input has a value and an onChange handler, so React keeps track of what the user types.
+“In MongoDB, Projects stores the project's name, description, status, and project_lead_id. The lead reference is stored as an ObjectId. ProjectMemberships is the separate relationship collection. Each document links one project_id to one user_id, also using ObjectIds. A user can appear in several membership documents with different project IDs. Names are looked up for display instead of being used as relationship keys.”
 
-“The submit handler prevents the browser from reloading the page. It calls postForm, which uses fetch to send a POST request with a JSON body. It checks the HTTP response and displays the server's message. The form is disabled while waiting. Network failures also produce a visible message.”
+## 3:25–4:00 — Explain React and API communication
 
-## 3:25–4:20 — Explain Express and MongoDB
+**Show:** The React project components and `client/src/api.js`.
 
-**Show:** `server/server.js`, then the `/signup` and `/login` routes in `server/app.js`.
+“The React interface separates project creation, project selection, and member management. State tracks the input values, selected project, member list, and feedback. The shared API helper uses fetch to send JSON requests to Express. Creating and adding use POST, listing uses GET, and removing a member uses DELETE. After changes succeed, the interface refreshes the relevant data and displays feedback.”
 
-“The server loads its MongoDB connection string from the environment file. MongoClient connects to the pa2 database and the users collection. Before listening, the server creates the unique username index.
+## 4:00–4:45 — Explain backend guarantees
 
-“The signup route validates all required fields and uses findOne to check for an existing username. If the username is available, it hashes the password and calls insertOne. It returns status 201 when the user is created, or 409 for a duplicate.
+**Show:** Project creation and member routes in `server/projects.js`, then index setup in `server/database.js`.
 
-“The login route validates the credentials and finds the user by username. It checks the submitted password against the saved hash, returning 200 for success or 401 for incorrect credentials. Database errors return a safe message with status 500.”
+“The backend validates required fields and statuses, converts valid IDs into MongoDB ObjectIds, and checks that referenced users and projects exist. Project creation uses a transaction to save the project and lead membership together. A unique index on project_id and user_id prevents duplicate memberships, including simultaneous requests. Before removing a member, the route checks the project's lead ID. Invalid requests and database failures return clear errors to the frontend. This completes the project and membership demonstration.”
 
-## 4:20–4:40 — Password handling and finish
-
-**Show:** `server/passwords.js`, then briefly the project folder and `.gitignore`.
-
-“The password helper uses scrypt with a random salt and compares the derived hashes. The actual password is never returned to the frontend. The gitignore file excludes environment credentials, dependencies, and local database files. This completes the signup and login demonstration.”
-
-Stop Zoom recording. Watch the resulting video and confirm that the sound, database document, success/failure messages, and code are readable before submitting it with the repository URL.
+Stop recording and replay the video. Confirm that it is between **3 and 5 minutes**, that both application and database views are readable, and that the sound is clear. Submit the actual Zoom video and the PA3 GitHub repository URL through Brightspace.

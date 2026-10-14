@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { postForm } from '../api.js';
 import { Feedback, PasswordField, TextField } from './FormFields.jsx';
 
-export default function Login({ initialUsername, onSignup }) {
+export default function Login({ initialUsername, onSignup, onProjects }) {
   const [username, setUsername] = useState(initialUsername);
   const [password, setPassword] = useState('');
   const [feedback, setFeedback] = useState(null);
@@ -38,6 +38,7 @@ export default function Login({ initialUsername, onSignup }) {
         <button className="primary-button" type="submit">{pending ? 'Logging in…' : 'Log in'}<span aria-hidden="true">↗</span></button>
       </fieldset>
     </form>
+    {feedback?.type === 'success' && <button className="success-link" onClick={onProjects}>Continue to projects <span aria-hidden="true">→</span></button>}
     <p className="form-switch">New here? <button onClick={onSignup}>Create an account</button></p>
   </>;
 }

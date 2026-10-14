@@ -1,18 +1,25 @@
 {
-  "name": "icsi418y-pa2",
-  "version": "1.0.0",
+  "name": "icsi418y-pa3",
+  "version": "2.0.0",
   "private": true,
-  "description": "ICSI 418Y PA2 — React, Express, and MongoDB login and signup",
-  "workspaces": ["client", "server"],
-  "engines": { "node": ">=22.12.0" },
+  "description": "ICSI 418Y PA3 \u2014 Projects and project memberships with React, Express, and MongoDB",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
     "dev": "concurrently --kill-others -n server,client \"npm run dev --workspace server\" \"npm run dev --workspace client\"",
     "demo": "node scripts/demo.cjs",
     "build": "npm run build --workspace client",
     "start": "npm start --workspace server",
-    "test": "node --test tests/api.test.cjs",
+    "test": "node --test tests/*.test.cjs",
     "test:ui": "playwright test",
-    "db:users": "node scripts/show-users.cjs"
+    "db:users": "node scripts/show-users.cjs",
+    "demo:seed": "node scripts/seed-demo.cjs",
+    "db:inspect": "node scripts/inspect-db.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

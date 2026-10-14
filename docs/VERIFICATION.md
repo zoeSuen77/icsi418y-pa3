@@ -1,25 +1,29 @@
-# Verification record
+# PA3 verification record
 
-Verified locally on September 23, 2026, using Node.js 24.15.0, MongoDB 7.0.14, and installed Google Chrome on macOS 13.5.
+Verified for the October 13, 2026 delivery, using Node.js 24.15.0, MongoDB 7.0.14, and installed Google Chrome on macOS.
 
 | Check | Result |
 | --- | --- |
-| `npm test` | 19 API integration tests passed against real MongoDB and HTTP requests |
-| `PLAYWRIGHT_CHANNEL=chrome npm run test:ui` | 5 browser tests passed |
-| `npm run build` | Production build passed |
-| `npm audit --omit=dev --audit-level=high` | 0 production dependency vulnerabilities reported |
-| Desktop visual review | Login and signup inspected at 1440 × 960 |
-| Mobile visual review | Signup inspected at 375 × 812; both forms tested for overflow |
-| Database persistence | A record remained after stopping and restarting MongoDB with the demo's disk-storage configuration |
+| `npm test` | 34 passed, 0 failed: 19 PA2 authentication checks and 15 PA3 project checks |
+| `PLAYWRIGHT_CHANNEL=chrome npm run test:ui` | 9 passed, 0 failed |
+| `npm run build` | Production build completed successfully |
+| `npm audit` after compatible dependency fixes | 0 reported vulnerabilities |
+| `npm run demo -- --seed` | React, Express and local replica set started; 3 users and 2 projects prepared |
+| `npm run db:inspect -- --local` | Users, Projects and ProjectMemberships inspected; references are ObjectIds |
+| Local demo stop/restart | Same persisted user and project records present after restart |
+| Repeated demo seed | Existing projects and user records preserved without duplicates |
+| Visual inspection | Desktop workspace, mobile creation form and member controls checked; no horizontal overflow at 375px |
 
-The browser test created a user through React, confirmed its document and hashed password in MongoDB, rejected a duplicate, and verified failed and successful login. Separate tests covered network failure, server failure, password visibility, and mobile layout. The browser test user was removed after the run.
+API checks cover project validation, all three statuses, nonexistent users and projects, ObjectId storage, automatic lead membership, multi-project membership, protected lead removal, concurrent duplicate rejection, transaction rollback when the membership write fails, safe database errors, and exclusion of password hashes from public responses. Existing registration and login checks still pass.
 
-API coverage includes all four required signup fields, both login fields, unknown username, wrong password, successful signup/login, document field names, hashed storage, unique usernames under concurrent requests, normalized usernames, exact password comparison, malformed/oversized JSON, CORS, and failures caused by a disconnected MongoDB client.
+Browser checks exercise signup/login, project creation, immediate lead membership, adding one user to two projects, duplicate feedback, removing a non-lead member without removing their other membership, page reload persistence, network retry, stale response handling when switching projects, and mobile layout.
 
-The downloaded MongoDB 8 executable and Playwright's current downloadable Chromium were incompatible with this computer's macOS version. Final tests instead used MongoDB 7.0.14 and the already installed Chrome; both completed successfully.
+API tests use temporary MongoDB instances. Browser tests use isolated ports 5174/9001/27019 and database `pa3_ui_test`. The saved demonstration uses ports 5173/9000/27018 and database `pa3`.
 
-Atlas connectivity and the complete browser flow were additionally verified on September 24, 2026. The application used the owner's Atlas cluster through the ignored local server/.env file. A temporary user was registered from React and confirmed in pa2.users with all five required fields and a hashed password. Duplicate signup and an incorrect password were rejected; correct credentials produced the login acknowledgement. The unique username index was present, and there were no browser runtime errors. Only the temporary verification user was removed afterward.
+## Scope and remaining submission work
 
-The repository contains no Atlas credentials. Other machines must configure their own server/.env and network access. Use npm run dev for Atlas; npm run demo remains the separate local MongoDB mode.
+This delivery was verified against a real local MongoDB replica set. An Atlas deployment was not tested because the disconnected PA2 drive's local `.env` was unavailable; no credentials are included. Atlas configuration and reuse of PA2 users are documented in README.
 
-The Zoom video and Brightspace submission still require the student's own recording and submission.
+The implementation follows the PA3 requirements previously read from the assignment document. The linked Notion implementation page was inaccessible through the browser tool.
+
+The student must record the required 3–5 minute Zoom demonstration and submit it with the PA3 GitHub repository URL through Brightspace. Automated checks and the prepared narration script do not replace the recording or submission.

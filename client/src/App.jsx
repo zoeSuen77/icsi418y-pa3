@@ -1,15 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Login from './components/Login.jsx';
 import Signup from './components/Signup.jsx';
+import ProjectsWorkspace from './components/ProjectsWorkspace.jsx';
 
 export default function App() {
-  const [view, setView] = useState('login');
+  const [view, setView] = useState(window.location.hash === '#projects' ? 'projects' : 'login');
   const [initialUsername, setInitialUsername] = useState('');
 
   function showLogin(username = '') {
     setInitialUsername(username);
-    setView('login');
+    changeView('login');
   }
+
+  function changeView(nextView) {
+    setView(nextView);
+    window.location.hash = nextView;
+  }
+
+  useEffect(() => {
+    const followHash = () => setView(['projects', 'signup'].includes(window.location.hash.slice(1)) ? window.location.hash.slice(1) : 'login');
+    window.addEventListener('hashchange', followHash);
+    return () => window.removeEventListener('hashchange', followHash);
+  }, []);
+
+  if (view === 'projects') return <ProjectsWorkspace onLogin={showLogin} onSignup={() => changeView('signup')} />;
 
   return <main className="app-shell">
     <aside className="intro-panel" aria-label="Welcome to Campus">
@@ -21,12 +35,13 @@ export default function App() {
     <section className="account-panel" aria-label="Account access">
       <nav className="view-switch" aria-label="Choose account form">
         <button aria-current={view === 'login' ? 'page' : undefined} onClick={() => showLogin()}>Log in</button>
-        <button aria-current={view === 'signup' ? 'page' : undefined} onClick={() => setView('signup')}>Sign up</button>
+        <button aria-current={view === 'signup' ? 'page' : undefined} onClick={() => changeView('signup')}>Sign up</button>
+        <button onClick={() => changeView('projects')}>Projects</button>
       </nav>
       <div className="form-container">
-        {view === 'login' ? <Login initialUsername={initialUsername} onSignup={() => setView('signup')} /> : <Signup onLogin={showLogin} />}
+        {view === 'login' ? <Login initialUsername={initialUsername} onSignup={() => changeView('signup')} onProjects={() => changeView('projects')} /> : <Signup onLogin={showLogin} />}
       </div>
-      <footer className="account-footer"><span>ICSI 418Y</span><span>PA2 · Login & Signup</span></footer>
+      <footer className="account-footer"><span>ICSI 418Y</span><span>PA3 · Projects & People</span></footer>
     </section>
   </main>;
 }

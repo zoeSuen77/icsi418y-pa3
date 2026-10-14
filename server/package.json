@@ -1,5 +1,5 @@
 {
-  "name": "pa2-server",
+  "name": "pa3-server",
   "version": "1.0.0",
   "private": true,
   "scripts": { "dev": "node --watch server.js", "start": "node server.js" },
